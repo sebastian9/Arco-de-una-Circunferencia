@@ -3,14 +3,9 @@
 #include <math.h>
 #define FACTOR_RADIAN M_PI / 180
 
-float cx[360];
-float cy[360];
-
-void circunferencia (float x, float y, float r);
-
 int main () {
     int i, k, centro, coincidencias[4];
-    float x, y, ha, hb, ka, kb, x1, x2, x3, y1, y2, y3, r, q, alfa, beta; 
+    float x, y, ha, hb, ka, kb, x1, x2, x3, y1, y2, y3, r, q, alfa; 
 
     printf("Introduce las coordenadas del primer punto\n");
     scanf("%f%f", &x1, &y1);
@@ -50,15 +45,14 @@ int main () {
         scanf("%i", &centro);
     }
 
-    // Computación de la circunferencia
-    circunferencia (x, y, r);
-    
     // Coincidencias de puntos dados con un punto en la circunferencia
     // Margen de error 0.0157 radianes o 0.9 grados
     k = 0;    
     for (i = 0; i < 360; i++) {
-        if (((fabs(cx[i] - x1) < fabs(r*0.01)) && (fabs(cy[i] - y1) < fabs(r*0.01)))
-        || ((fabs(cx[i] - x2) < fabs(r*0.01)) && (fabs(cy[i] - y2) < fabs(r*0.01)))) {
+        float a = r * cos(i * FACTOR_RADIAN) + x;
+        float b = r * sin(i * FACTOR_RADIAN) + y;
+        if (((fabs(a - x1) < fabs(r*0.0157)) && (fabs(b - y1) < fabs(r*0.0157)))
+        || ((fabs(a - x2) < fabs(r*0.0157)) && (fabs(b - y2) < fabs(r*0.0157)))) {
             coincidencias[k] = i;
             k++;
         }
@@ -70,26 +64,16 @@ int main () {
     if (fabs(fabs(coincidencias[0] - coincidencias[k-1]) - alfa) < 5) {
         for (i = 0; i < 360; i++) {
             if ((i >= coincidencias[0]) && (i <= coincidencias[k-1]))
-                printf("%i\t(%f, %f)\n", i, cx[i], cy[i]);
+                printf("%i\t(%f, %f)\n", i, r * cos(i * FACTOR_RADIAN) + x, 
+                    r * sin(i * FACTOR_RADIAN) + y);
         }
     } else {
-        i = 0;
-        printf("i:%i\t[0]:%i\ti-[k-1]:%i\tbeta:%f\n", i, coincidencias[0], i - coincidencias[k-1], fabs(beta));
         for (i = 0; i < 360; i++) {
             if ((i <= coincidencias[0]) || (360 - coincidencias[k-1] >= 360 - i))
-                printf("%i\t(%f, %f)\n", i, cx[i], cy[i]);
+                printf("%i\t(%f, %f)\n", i, r * cos(i * FACTOR_RADIAN) + x, 
+                    r * sin(i * FACTOR_RADIAN) + y);
         }
     }
 
     // system("pause");
-    return 0;
-}
-
-void circunferencia (float x, float y, float r) {
-    int i; 
-    for (i = 0; i < 360; i++)
-    {
-        cx[i] = r * cos(i * FACTOR_RADIAN) + x;
-        cy[i] = r * sin(i * FACTOR_RADIAN) + y;
-    }
 }
